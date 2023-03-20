@@ -6,7 +6,7 @@ class TimsesController {
   // CREATE OR REGISTER TIMES
   register = async (req, res) => {
     try {
-      const { nama, desa, wa, kecamatan, password, email } = req.body;
+      const { nama, desa, wa, kecamatan, password, email, role } = req.body;
 
       const kecId = new mongoose.Types.ObjectId(req.body.kecamatan);
 
@@ -39,6 +39,7 @@ class TimsesController {
         kecamatan: kecId,
         password: passHash,
         email,
+        role,
       });
 
       return res.json({ status: "success", message: timses });

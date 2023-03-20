@@ -47,6 +47,7 @@ class MasyarakatController {
   // find by profile name and kecamatan
   findByProfile = async (req, res) => {
     try {
+      const searchQuery = req.query.search || "" || 0; // default to empty string if no search query provided
       const timsId = req.app.locals.credential.cekmail._id;
       console.log({ timsId });
       const users = await Tims.findById(timsId);
@@ -57,7 +58,19 @@ class MasyarakatController {
       }
       console.log({ users });
 
-      const warga = await Masyarakat.find({ tims: users._id });
+      const warga = await Masyarakat.find({
+        $and: [
+          { tims: users._id },
+          {
+            $or: [
+              { nama: { $regex: searchQuery, $options: "i" } },
+              { alamat: { $regex: searchQuery, $options: "i" } },
+              // { nik: { $eq: parseInt(searchQuery) } },
+              // add more fields to search here as needed
+            ],
+          },
+        ],
+      });
       if (!warga.length) {
         return res
           .status(400)
@@ -73,7 +86,15 @@ class MasyarakatController {
   // find all warga
   findAll = async (req, res) => {
     try {
-      const warga = await Masyarakat.find();
+      const searchQuery = req.query.search || ""; // default to empty string if no search query provided
+      const warga = await Masyarakat.find({
+        $or: [
+          { nama: { $regex: searchQuery, $options: "i" } },
+
+          { alamat: { $regex: searchQuery, $options: "i" } },
+          // add more fields to search here as needed
+        ],
+      });
       return res.json({ status: "success", data: warga });
     } catch (error) {
       console.log(error);

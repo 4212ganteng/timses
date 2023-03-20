@@ -28,6 +28,11 @@ const TimsSchema = new mongoose.Schema(
 
       default: "",
     },
+    role: {
+      type: String,
+
+      default: "timses",
+    },
     kecamatan: {
       type: ObjectId,
       ref: "Kecamatan",
