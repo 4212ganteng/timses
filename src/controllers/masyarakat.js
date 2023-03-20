@@ -47,16 +47,21 @@ class MasyarakatController {
   // find by profile name and kecamatan
   findByProfile = async (req, res) => {
     try {
-      const searchQuery = req.query.search || "" || 0; // default to empty string if no search query provided
+      const searchQuery = req.query.search || "";
       const timsId = req.app.locals.credential.cekmail._id;
       console.log({ timsId });
       const users = await Tims.findById(timsId);
       if (!users) {
         return res
           .status(404)
-          .json({ status: "error", message: "data tidak di temukan" });
+          .json({ status: "error", message: "data tidak ditemukan" });
       }
       console.log({ users });
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
 
       const warga = await Masyarakat.find({
         $and: [
@@ -65,18 +70,36 @@ class MasyarakatController {
             $or: [
               { nama: { $regex: searchQuery, $options: "i" } },
               { alamat: { $regex: searchQuery, $options: "i" } },
-              // { nik: { $eq: parseInt(searchQuery) } },
-              // add more fields to search here as needed
+            ],
+          },
+        ],
+      })
+        .skip(startIndex)
+        .limit(limit);
+
+      const total = await Masyarakat.countDocuments({
+        $and: [
+          { tims: users._id },
+          {
+            $or: [
+              { nama: { $regex: searchQuery, $options: "i" } },
+              { alamat: { $regex: searchQuery, $options: "i" } },
             ],
           },
         ],
       });
-      if (!warga.length) {
-        return res
-          .status(400)
-          .json({ status: "error", message: "Data masih kosong" });
-      }
-      return res.json({ status: "success", data: warga });
+
+      const pageCount = Math.ceil(total / limit);
+
+      const response = {
+        status: "success",
+        data: warga,
+        page: page,
+        pageCount: pageCount,
+        total: total,
+      };
+
+      return res.json(response);
     } catch (error) {
       console.log(error);
       return res.status(500).json({ status: "error", message: error.message });
@@ -86,16 +109,42 @@ class MasyarakatController {
   // find all warga
   findAll = async (req, res) => {
     try {
-      const searchQuery = req.query.search || ""; // default to empty string if no search query provided
+      const searchQuery = req.query.search || "";
+      const page = parseInt(req.query.page) || 1; // default to first page if no page parameter provided
+      const limit = parseInt(req.query.limit) || 10; // default to 10 documents per page if no limit parameter provided
+
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+
       const warga = await Masyarakat.find({
         $or: [
           { nama: { $regex: searchQuery, $options: "i" } },
+          { alamat: { $regex: searchQuery, $options: "i" } },
+          // add more fields to search here as needed
+        ],
+      })
+        .skip(startIndex)
+        .limit(limit);
 
+      const totalDocuments = await Masyarakat.countDocuments({
+        $or: [
+          { nama: { $regex: searchQuery, $options: "i" } },
           { alamat: { $regex: searchQuery, $options: "i" } },
           // add more fields to search here as needed
         ],
       });
-      return res.json({ status: "success", data: warga });
+
+      const totalPages = Math.ceil(totalDocuments / limit);
+
+      const response = {
+        status: "success",
+        data: warga,
+        currentPage: page,
+        totalPages: totalPages,
+        totalDocuments: totalDocuments,
+      };
+
+      return res.json(response);
     } catch (error) {
       console.log(error);
       return res.status(500).json({ status: "error", message: error.message });
