@@ -41,6 +41,10 @@ const MasyarakatSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    kecamatan: {
+      type: ObjectId,
+      ref: "Kecamatan",
+    },
   },
   { timestamps: true }
 );
