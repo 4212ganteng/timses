@@ -111,7 +111,7 @@ class MasyarakatController {
 
       console.log("timsid", tims._id);
       const cekNik = await Masyarakat.findOne({ nik });
-      if (cekNik && cekNik._id != id) {
+      if (cekNik) {
         // Menambahkan validasi jika nik yang dimasukkan sudah ada
         return res.status(401).json({
           status: "fail",
