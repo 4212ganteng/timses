@@ -89,8 +89,7 @@ class TimsesController {
   cekAuth = async (req, res) => {
     try {
       // Get id from token
-      const id = new mongoose.Types.ObjectId(req.app.locals.credential.id);
-
+      const id = req.app.locals.credential;
       const dataUser = await Tims.findOne({
         where: {
           _id: id,
@@ -115,6 +114,7 @@ class TimsesController {
             email: dataUser.email,
             wa: dataUser.wa,
             desa: dataUser.desa,
+            role: dataUser.role,
             kecamatan: dataUser.kecamatan.nama,
           },
         },
