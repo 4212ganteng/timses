@@ -11,6 +11,17 @@ class KecamatanController {
       return res.status(500).json({ status: "error", message: error.message });
     }
   };
+
+  findAll = async (req, res) => {
+    try {
+      const warga = await Kecamatan.find();
+
+      return res.json({ statu: "success", data: warga });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ status: "error", message: error.message });
+    }
+  };
 }
 
 module.exports = new KecamatanController();

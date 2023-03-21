@@ -8,7 +8,7 @@ const MasyarakatSchema = new mongoose.Schema(
       ref: "Tims",
     },
     nik: {
-      type: Number,
+      type: String,
       unique: true,
       default: 0,
       required: true,
@@ -42,7 +42,7 @@ const MasyarakatSchema = new mongoose.Schema(
       default: "",
     },
     kecamatan: {
-      type: ObjectId,
+      type: String,
       ref: "Kecamatan",
     },
   },

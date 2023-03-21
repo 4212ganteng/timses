@@ -70,6 +70,7 @@ class MasyarakatController {
             $or: [
               { nama: { $regex: searchQuery, $options: "i" } },
               { alamat: { $regex: searchQuery, $options: "i" } },
+              { nik: { $regex: searchQuery, $options: "i" } },
             ],
           },
         ],
@@ -84,6 +85,7 @@ class MasyarakatController {
             $or: [
               { nama: { $regex: searchQuery, $options: "i" } },
               { alamat: { $regex: searchQuery, $options: "i" } },
+              { nik: { $regex: searchQuery, $options: "i" } },
             ],
           },
         ],
@@ -130,6 +132,7 @@ class MasyarakatController {
         $or: [
           { nama: { $regex: searchQuery, $options: "i" } },
           { alamat: { $regex: searchQuery, $options: "i" } },
+          { nik: { $regex: searchQuery, $options: "i" } },
           // add more fields to search here as needed
         ],
       });
